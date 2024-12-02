@@ -245,7 +245,7 @@ class AspectRatioPredictionPipeline():
             # Prepare detailed prediction information
             prediction_info = {
                 'model_used': model_name,
-                'predicted_aspect_ratio': prediction[0]
+                'processed_features': list(processed_data.columns)
             }
             
             return prediction[0], prediction_info
