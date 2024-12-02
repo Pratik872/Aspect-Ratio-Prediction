@@ -108,18 +108,23 @@ class SavedBoxCoxTransformer(BaseEstimator, TransformerMixin):
             'Power (W)', 'Mass Flowrate (g/min)', 'Travel Velocity (mm/min)',
             'Height (mm)', 'Contact Angle (deg)', 'Size_Width_Ratio'
         ] + [col for col in X_transformed.columns if 'Material_Group' in col]
-        
-        print("\nFinal transformed features:")
-        print("-" * 50)
+
+        # Create a dictionary to store the formatted values
+        formatted_values = {}
         for col in final_features:
             value = X_transformed[col].values[0]  # Get the first (and only) value
             if isinstance(value, (int, float)):
                 print(f"{col:<40}: {value:>10.4f}")
+                formatted_values[col] = round(value, 4)
             else:
                 print(f"{col:<40}: {value:>10}")
+                formatted_values[col] = value
         print("-" * 50)
+
+        # Create DataFrame from the formatted values
+        transformed_df = pd.DataFrame([formatted_values])
         
-        return X_transformed[final_features]
+        return X_transformed[final_features], transformed_df
     
 class AspectRatioPredictionPipeline():
     """
@@ -229,7 +234,7 @@ class AspectRatioPredictionPipeline():
         
         try:
             # Process and transform the input data
-            processed_data = self.preprocessing_pipeline.transform(input_data)
+            processed_data, transformed_df  = self.preprocessing_pipeline.transform(input_data)
             
             # Verify processed data has correct features and order
             expected_features = self.numeric_features + self.material_features
@@ -245,7 +250,7 @@ class AspectRatioPredictionPipeline():
             # Prepare detailed prediction information
             prediction_info = {
                 'model_used': model_name,
-                'processed_features': list(processed_data.columns)
+                'Final_Transformed_features': transformed_df
             }
             
             return prediction[0], prediction_info
