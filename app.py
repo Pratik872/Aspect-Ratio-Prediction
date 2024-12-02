@@ -101,6 +101,7 @@ def create_prediction_app():
             # Display additional information in an expander
             with st.expander("See Prediction Details"):
                 st.write("Model Used:", info['model_used'])
+                st.write("Features Used:", info['processed_features'])
             
             
         except Exception as e:
